@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var cellStr = "*"
+
 type World struct {
 	num         int
 	m           [20][20]string
@@ -36,7 +38,7 @@ func (w World) printWorld() {
 func (w *World) fillWorld() {
 	for i, _ := range w.m {
 		for j, _ := range w.m[i] {
-			if w.m[i][j] != "*" {
+			if w.m[i][j] != cellStr {
 				w.m[i][j] = " "
 			}
 		}
@@ -49,8 +51,46 @@ func (w World) printCells() {
 	}
 }
 
+func (w World) checkCellNeighbors(x int, y int) bool {
+	var neighbors := 0
+
+	//LEFT
+	if x-1 >= 0 && w.m[x-1][y] == cellStr {
+		neighbors += 1
+	}
+	//RIGHT
+	if x+1 < len(w.m[0]) && w.m[x-1][y] == cellStr {
+		neighbors += 1
+	}
+	//UP
+	if y-1 >= 0 && w.m[x][y-1] == cellStr {
+		neighbors += 1
+	}
+	//DOWN
+	if y+1 >= w.m[0][0] && w.m[x][y+1] == cellStr {
+		neighbors += 1
+	}
+	//UP LEFT
+	if x-1 >= 0  && y-1 >= 0 && w.m[x-1][y-1] == cellStr {
+		neighbors += 1
+	}
+	//UP RIGHT
+	if x+1 < len(w.m[0])  && y-1 >= 0 && w.m[x+1][y-1] == cellStr {
+		neighbors += 1
+	}
+	//DOWN LEFT
+	if x-1 >= 0  && y+1 < len(w.m[0][0]) && w.m[x-1][y+1] == cellStr {
+		neighbors += 1
+	}
+	//DOWN RIGHT
+	if x-1 >= 0  && y-1 >= 0 && w.m[x-1][y-1] == cellStr {
+		neighbors += 1
+	}
+
+}
+
 func (w *World) setCell(x int, y int) {
-	w.m[x][y] = "*"
+	w.m[x][y] = cellStr
 	w.livingCells = append(w.livingCells, Cell{x, y})
 }
 
@@ -62,7 +102,18 @@ func (w *World) startGame() {
 	endGame := false
 
 	for endGame == false {
-		fmt.Println("TEST")
+		w.printCells()
+		for i, _ := range w.m {
+			for j, _ := range w.m[i] {
+				if w.m[i][j] == cellStr {
+					if w.checkCellNeighbors(i, j) {
+
+					}
+				} else {
+					fmt.Println("DEAD")
+				}
+			}
+		}
 		endGame = true
 	}
 }
@@ -75,7 +126,7 @@ func main() {
 	}
 
 	w.initLife()
-	w.printWorld()
-	w.printCells()
+	//w.printWorld()
+	//w.printCells()
 	w.startGame()
 }
